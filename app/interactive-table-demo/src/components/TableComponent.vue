@@ -3,15 +3,23 @@
     <table align="center">
       <thead>
         <tr>
-          <th
-            v-for="column in columns"
-            :key="column.field"
-            @click="setEditCell(null, null)"
-          >{{ column.label }}</th>
+          <th v-for="column in columns" :key="column.field" @click="setEditCell(null, null)">
+            <span>{{ column.label }}</span>
+            <div class="arrow">
+              <img
+                :src="selectArrowImg(column.field, 'up')"
+                @click="setSortLogic(column.field, 'up')"
+              />
+              <img
+                :src="selectArrowImg(column.field, 'down')"
+                @click="setSortLogic(column.field, 'down')"
+              />
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in rows" :key="row.id">
+        <tr v-for="row in rowSorted" :key="row.id">
           <td
             v-for="column in columns"
             :key="column.field"
@@ -29,6 +37,11 @@
 </template>
 
 <script>
+import UpArrowWhite from "@/assets/arrow/up-arrow-white.png";
+import DownArrowWhite from "@/assets/arrow/down-arrow-white.png";
+import UpArrowBlue from "@/assets/arrow/up-arrow-blue.png";
+import DownArrowBlue from "@/assets/arrow/down-arrow-blue.png";
+
 export default {
   name: "table-component",
   data() {
@@ -98,8 +111,30 @@ export default {
       editCell: {
         id: null,
         property: null
+      },
+      sortLogic: {
+        column: null,
+        dir: null
       }
     };
+  },
+  computed: {
+    rowSorted() {
+      const rows = this.rows;
+      const sortLogic = this.sortLogic;
+
+      if (sortLogic.column === null || sortLogic.dir === null) {
+        return rows;
+      } else {
+        return rows.sort((a, b) => {
+          if (a[sortLogic.column] < b[sortLogic.column]) {
+            return sortLogic.dir === "up" ? -1 : 1;
+          } else {
+            return sortLogic.dir === "up" ? 1 : -1;
+          }
+        });
+      }
+    }
   },
   methods: {
     isEdit(id, property) {
@@ -108,6 +143,17 @@ export default {
     },
     setEditCell(id, property) {
       this.editCell = { id, property };
+    },
+    selectArrowImg(column, dir) {
+      const obj = { column, dir };
+      if (JSON.stringify(obj) === JSON.stringify(this.sortLogic)) {
+        return dir === "up" ? UpArrowBlue : DownArrowBlue;
+      } else {
+        return dir === "up" ? UpArrowWhite : DownArrowWhite;
+      }
+    },
+    setSortLogic(column, dir) {
+      this.sortLogic = { column, dir };
     }
   }
 };
@@ -148,10 +194,22 @@ td:hover {
 }
 
 input {
-  height: 32px;
-  width: 200px;
+  height: 36px;
+  width: 180px;
   font-size: 24px;
   padding: 0 8px;
   text-align: center;
+}
+
+.arrow {
+  float: right;
+  margin-right: 12px;
+}
+
+.arrow img {
+  display: block;
+  height: 20px;
+  cursor: pointer;
+  margin: 2px 0;
 }
 </style>
