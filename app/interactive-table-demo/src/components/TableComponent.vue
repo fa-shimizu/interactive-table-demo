@@ -119,7 +119,7 @@ tr {
 }
 
 thead {
-  font-size: 36px;
+  font-size: 32px;
 }
 
 thead tr {
@@ -127,7 +127,9 @@ thead tr {
 }
 
 th {
-  width: 240px;
+  width: 360px;
+  background-color: #2c3e50;
+  color: #ffffff;
 }
 
 tbody {
