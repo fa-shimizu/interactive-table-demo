@@ -1,12 +1,16 @@
 <template>
   <div class="table-component">
     <table align="center">
-      <tr class="column">
-        <th v-for="column in columns" :key="column.field">{{ column.label }}</th>
-      </tr>
-      <tr class="row" v-for="row in rows" :key="row.id">
-        <td v-for="column in columns" :key="column.field">{{ row[column.field]}}</td>
-      </tr>
+      <thead>
+        <tr>
+          <th v-for="column in columns" :key="column.field">{{ column.label }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="row in rows" :key="row.id">
+          <td v-for="column in columns" :key="column.field">{{ row[column.field]}}</td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>
@@ -88,17 +92,23 @@ tr {
   height: 48px;
 }
 
-.column {
+thead {
+  font-size: 36px;
+}
+
+thead tr {
   height: 60px;
 }
 
 th {
   width: 240px;
-  font-size: 36px;
+}
+
+tbody {
+  font-size: 24px;
 }
 
 td {
-  font-size: 24px;
   transition: background-color 0.3s, text-decoration 0.3s, font-weight 0.3s;
   cursor: pointer;
 }
