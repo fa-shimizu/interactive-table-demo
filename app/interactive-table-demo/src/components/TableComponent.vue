@@ -19,15 +19,27 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="row in rowSorted" :key="row.id">
+        <tr @click="setEditCell(null, null)">
+          <td v-for="column in columns" :key="column.field">
+            <input
+              class="filter"
+              type="text"
+              name="filter"
+              placeholder="This is filter."
+              v-model="filterValue[column.field]"
+            />
+          </td>
+        </tr>
+        <tr v-for="row in rowSorted" :key="row.id" v-show="isShowRow(row)">
           <td
+            class="value"
             v-for="column in columns"
             :key="column.field"
             @click="setEditCell(row.id, column.field)"
           >
             <span v-if="!isEdit(row.id, column.field)">{{ row[column.field] }}</span>
             <span v-else>
-              <input type="text" v-model="row[column.field]" />
+              <input class="value-edit" type="text" v-model="row[column.field]" />
             </span>
           </td>
         </tr>
@@ -115,6 +127,12 @@ export default {
       sortLogic: {
         column: null,
         dir: null
+      },
+      filterValue: {
+        name: "",
+        age: "",
+        creadtedAt: "",
+        score: ""
       }
     };
   },
@@ -154,6 +172,17 @@ export default {
     },
     setSortLogic(column, dir) {
       this.sortLogic = { column, dir };
+    },
+    isShowRow(row) {
+      const boolList = Object.keys(this.filterValue).map(property => {
+        if (this.filterValue[property] === "") {
+          return true;
+        }
+
+        const value = `${row[property]}`;
+        return value.match(this.filterValue[property]);
+      });
+      return boolList.every(value => value);
     }
   }
 };
@@ -182,18 +211,18 @@ tbody {
   font-size: 24px;
 }
 
-td {
+td.value {
   transition: background-color 0.3s, text-decoration 0.3s, font-weight 0.3s;
   cursor: pointer;
 }
 
-td:hover {
+td.value:hover {
   background-color: #dcdcdc;
   text-decoration: underline;
   font-weight: bold;
 }
 
-input {
+.value-edit {
   height: 36px;
   width: 180px;
   font-size: 24px;
@@ -211,5 +240,13 @@ input {
   height: 20px;
   cursor: pointer;
   margin: 2px 0;
+}
+
+.filter {
+  font-size: 20px;
+  height: 32px;
+  width: 280px;
+  border: #dcdcdc solid 2px;
+  padding: 0 8px;
 }
 </style>
